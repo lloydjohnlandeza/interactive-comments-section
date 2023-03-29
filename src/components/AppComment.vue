@@ -6,7 +6,7 @@
   import IconReply from './icons/IconReply.vue'
   import type { IUser, IComment } from '@/types/types'
   import AppAddComment from './AppAddComment.vue'
-  
+
   const props = defineProps({
     id: {
       type: [String, Number],
@@ -57,11 +57,14 @@
   const emit = defineEmits<{
     (event: 'upVote', value: Array<number>): void;
     (event: 'downVote', value: Array<number>): void;
-    (event: 'replied', value: { ids: Array<number> | number, reply: IComment }): void;
-
+    (event: 'replied', value: { indices: Array<number>, reply: IComment }): void;
+    (event: 'updated', value: { indices: Array<number>, reply: IComment }): void;
+    (event: 'deleted', value: Array<number> ): void;
   }>();
 
   const isReplying = ref(false)
+  const isEdting = ref(false)
+  const isDeleting = ref(false)
 
   const img = computed(() => {
     return new URL(props.user.image.webp, import.meta.url).toString()
@@ -88,14 +91,38 @@
     emit('downVote', newIds)
   }
 
-  const replySent = (event: { ids: Array<number> | number, reply: IComment }) => {
+  const replySent = (event: { indices: Array<number> | number, reply: IComment }) => {
     let newIds = []
-    if (Array.isArray(event.ids)) {
-      newIds = [props.index, ...event.ids]
+    if (Array.isArray(event.indices)) {
+      newIds = [props.index, ...event.indices]
     } else {
-      newIds.push(event.ids)
+      newIds.push(event.indices)
     }
-    emit('replied', { ids: newIds, reply: event.reply })
+    isReplying.value = false
+    emit('replied', { indices: newIds, reply: event.reply })
+  }
+
+  const updateComment = (event: { indices: Array<number> | number, reply: IComment }) => {
+    let newIds = []
+    if (Array.isArray(event.indices)) {
+      newIds = [props.index, ...event.indices]
+    } else {
+      newIds.push(event.indices)
+    }
+    emit('updated', { indices: newIds, reply: event.reply })
+    isEdting.value = false
+  }
+
+  const deleteComment = (indices: Array<number> | number) => {
+    let newIds = []
+    if (Array.isArray(indices)) {
+      newIds = [props.index, ...indices]
+    } else {
+      newIds.push(indices)
+    }
+    emit('deleted', newIds)
+    isDeleting.value = false
+    isEdting.value = false
   }
 </script>
 
@@ -108,7 +135,17 @@
         <span class="date">{{ createdAt }}</span>
       </div>
       <div class="content">
-       <span v-if="replyingTo"  >{{ `@${replyingTo}` }}</span> {{ content }}
+        <app-add-comment
+          v-if="isEdting"
+          button-label="Update"
+          :init-comment="content"
+          :show-image="false"
+          :current-user="currentUser"
+          @send="updateComment({ indices: index, reply: $event })"
+        />
+        <div v-else>
+          <span v-if="replyingTo"  >{{ `@${replyingTo}` }}</span> {{ content }}
+        </div>
       </div>
       <div class="score-container">
         <button :class="{ 'up-voted' : upVoted}" @click="handleUpvote(index)">
@@ -126,10 +163,10 @@
         </button>
       </div>
       <div v-else class="button-container">
-        <button class="btn-soft-red">
+        <button class="btn-soft-red" @click="deleteComment(index)">
           Delete
         </button>
-        <button>
+        <button @click="isEdting = !isEdting">
           Edit
         </button>
       </div>
@@ -138,7 +175,7 @@
       v-if="isReplying"
       button-label="Reply"
       :current-user="currentUser"
-      @send="replySent({ ids: index, reply: $event })"
+      @send="replySent({ indices: index, reply: $event })"
     />
     <div v-if="replies && replies.length" class="comment-list">
       <app-comment
@@ -146,9 +183,12 @@
         :index="index"
         :currentUser="currentUser"
         v-bind="item"
+        @deleted="deleteComment"
+        @updated="updateComment"
         @replied="replySent"
         @down-vote="handleDownvote"
         @up-vote="handleUpvote"
+
       />
     </div>
   </div>
@@ -190,6 +230,9 @@
     .content {
       margin: 15px 0;
       grid-column: 1/3;
+      > .card {
+        padding: 0;
+      }
       span {
         font-weight: 500;
         color: var(--moderate-blue);

@@ -7,7 +7,7 @@
 
   const comments = reactive<Array<IComment>>(data.comments)
 
-  const findObjectByIndices = (data: Array<IComment>, indices: Array<number>): IComment | null => {
+  const findCommentByIndices = (data: Array<IComment>, indices: Array<number>): IComment | null => {
     const index = indices.shift() as number;
     const obj = data[index];
     if (!obj) {
@@ -16,11 +16,15 @@
     if (indices.length === 0) {
       return obj;
     }
-    return findObjectByIndices(obj.replies || [], indices);
+    return findCommentByIndices(obj.replies, indices);
   };
 
-  const handleUpvote = (ids: Array<number>) => {
-    const comment = findObjectByIndices(comments, ids)
+  const newComment = (comment: IComment) => {
+    comments.push(comment)
+  }
+
+  const handleUpvote = (indices: Array<number>) => {
+    const comment = findCommentByIndices(comments, indices)
     if (!comment) return
     const change = comment.downVoted ? 2 : 1
     if (comment.upVoted) {
@@ -33,8 +37,8 @@
     }
   }
 
-  const handleDownVote = (ids: Array<number>) => {
-    const comment = findObjectByIndices(comments, ids)
+  const handleDownVote = (indices: Array<number>) => {
+    const comment = findCommentByIndices(comments, indices)
     if (!comment) return
     const change = comment.upVoted ? 2 : 1
     if (comment.downVoted) {
@@ -46,12 +50,42 @@
       comment.upVoted = false
     }
   }
-  const newComment = (comment: IComment) => {
-    comments.push(comment)
+
+
+  const handleReply = (event: { indices: Array<number>, reply: IComment }) => {
+    const comment = findCommentByIndices(comments, event.indices)
+    if (!comment) return
+    const reply = {
+      ...event.reply,
+      replyingTo: comment.user.username
+    }
+    comment.replies.push(reply)
   }
-  const test = (e) => {
-    console.log(e)
+
+  const handleUpdate = (event: { indices: Array<number>, reply: IComment }) => {
+    const comment = findCommentByIndices(comments, event.indices)
+    if (!comment) return
+    comment.content = event.reply.content
   }
+
+  const handleDelete = (indices: Array<number>) => {
+    if (indices.length <= 0) return
+
+    if (indices.length === 1) {
+      comments.splice(indices[0], 1)
+      return
+    }
+    const parentComment = indices.shift() as number
+    const childComment = indices.pop() as number
+    let data = comments[parentComment]
+
+    for (let index = 0; index < indices.length; index++) {
+      const element = indices[index];
+      data = data.replies[element]
+    }
+    data.replies.splice(childComment, 1)
+  }
+
 </script>
 
 <template>
@@ -61,7 +95,9 @@
       v-bind="item"
       :index="index"
       :currentUser="data.currentUser"
-      @replied="test"
+      @deleted="handleDelete"
+      @updated="handleUpdate"
+      @replied="handleReply"
       @upVote="handleUpvote"
       @downVote="handleDownVote"
     ></app-comment>

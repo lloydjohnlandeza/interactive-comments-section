@@ -13,7 +13,7 @@ export interface IComment {
   score: number
   user: IUser
   replyingTo?: string
-  replies?: Array<IComment>
+  replies: Array<IComment>
   upVoted?: boolean
   downVoted?: boolean
 }

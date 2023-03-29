@@ -17,6 +17,10 @@
     showImage: {
       type: Boolean,
       default: true
+    },
+    initComment: {
+      type: String,
+      default: ''
     }
   })
   const emit = defineEmits<{
@@ -27,16 +31,18 @@
     return new URL(props.currentUser.image.webp, import.meta.url).toString()
   })
 
-  const comment = ref('')
+  const comment = ref(props.initComment)
 
   const handleSubmit = () => {
+    if (comment.value === '') return
     const commentObject: IComment = {
       id: uuidv4(),
       content: comment.value,
       createdAt: 'Just Now',
       score: 1,
       user: props.currentUser,
-      upVoted: true
+      upVoted: true,
+      replies: []
     }
     emit('send', commentObject)
     comment.value = ''
@@ -46,7 +52,7 @@
 <template>
   <div class="card">
     <textarea v-model="comment" name="comment" placeholder="Add a comment..."></textarea>
-    <img :src="img" />
+    <img v-if="showImage" :src="img" />
     <button @click="handleSubmit">{{buttonLabel}}</button>
   </div>
 </template>
@@ -64,10 +70,12 @@
       border: solid 1px var(--light-gray);
       outline: none !important;
       transition: all .3s ease;
+      font-family: 'Rubik';
+      font-size: 16px;
       &:focus {
         border: solid 1px var(--grayish-blue);
       }
-      &::placeholder {
+      &:placeholder {
         font-family: 'Rubik';
       }
     }

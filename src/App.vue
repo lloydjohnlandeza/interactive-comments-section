@@ -101,10 +101,10 @@
       @upVote="handleUpvote"
       @downVote="handleDownVote"
     ></app-comment>
-    <app-add-comment
-      :currentUser="data.currentUser"
-      @send="newComment"
-    />
+      <!-- <app-add-comment
+        :currentUser="data.currentUser"
+        @send="newComment"
+      /> -->
   </main>
 </template>
 

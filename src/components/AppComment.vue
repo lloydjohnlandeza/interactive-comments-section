@@ -128,13 +128,13 @@
 
 <template>
   <div class="comment-container">
-    <div class="comment card">
-      <div class="header">
-        <img :src="img" />
-        <span class="username">{{ user.username }}</span>
-        <span class="date">{{ createdAt }}</span>
+    <div class="bg-white p-4 rounded-lg grid grid-cols-2 gap-4 mb-5">
+      <div class="flex col-span-3 items-center gap-4 ">
+        <img class="w-10" :src="img" />
+        <span class="font-rubik font-bold text-dark-blue">{{ user.username }}</span>
+        <span class="text-grayish-blue">{{ createdAt }}</span>
       </div>
-      <div class="content">
+      <div class="col-span-3">
         <app-add-comment
           v-if="isEdting"
           button-label="Update"
@@ -144,25 +144,25 @@
           @send="updateComment({ indices: index, reply: $event })"
         />
         <div v-else>
-          <span v-if="replyingTo"  >{{ `@${replyingTo}` }}</span> {{ content }}
+          <span v-if="replyingTo" class="font-medium text-moderate-blue" >{{ `@${replyingTo}` }}</span> <span class="font-rubik text-grayish-blue">{{ content }}</span>
         </div>
       </div>
-      <div class="score-container">
-        <button :class="{ 'up-voted' : upVoted}" @click="handleUpvote(index)">
+      <div class="bg-very-light-gray col-start-1 max-w-max rounded-lg">
+        <button class="p-3 fill-grayish-blue hover:opacity-70 transition-all" :class="{ 'fill-soft-red' : upVoted}" @click="handleUpvote(index)">
           <IconPlus />
         </button>
-        {{ score }}
-        <button :class="{ 'down-voted' : downVoted}" @click="handleDownvote(index)">
+        <span class="text-moderate-blue font-medium">{{ score }}</span>
+        <button class="p-3 fill-grayish-blue hover:opacity-70 transition-all" :class="{ 'fill-soft-red' : downVoted}" @click="handleDownvote(index)">
           <IconMinus />
         </button>
       </div>
-      <div v-if="user.username !== currentUser.username" class="button-container">
-        <button @click="isReplying = !isReplying">
+      <div v-if="user.username !== currentUser.username" class="col-start-2 ml-auto max-w-max">
+        <button class="flex items-center gap-2 text-moderate-blue fill-moderate-blue font-medium hover:opacity-70 transition-all" @click="isReplying = !isReplying">
           <IconReply />
           Reply
         </button>
       </div>
-      <div v-else class="button-container">
+      <div v-else class="col-start-2 ml-auto max-w-max">
         <button class="btn-soft-red" @click="deleteComment(index)">
           Delete
         </button>
@@ -171,13 +171,15 @@
         </button>
       </div>
     </div>
+
     <app-add-comment
       v-if="isReplying"
       button-label="Reply"
       :current-user="currentUser"
       @send="replySent({ indices: index, reply: $event })"
     />
-    <div v-if="replies && replies.length" class="comment-list">
+
+    <div v-if="replies && replies.length" class="relative pl-4 comment-list">
       <app-comment
         v-for="(item, index) in replies" :key="index"
         :index="index"
@@ -207,7 +209,7 @@
         margin-left: 2px;
         height: 100%;
         width: 1px;
-        background-color: var(--light-grayish-blue);
+        background-color: var(--light-gray);
       }
     }
   }

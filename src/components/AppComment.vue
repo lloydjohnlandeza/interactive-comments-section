@@ -162,11 +162,11 @@
           Reply
         </button>
       </div>
-      <div v-else class="col-start-2 ml-auto max-w-max">
-        <button class="btn-soft-red" @click="deleteComment(index)">
+      <div v-else class="flex col-start-2 ml-auto max-w-max gap-4">
+        <button class="text-soft-red fill-soft-red font-medium hover:opacity-70 transition-all" @click="deleteComment(index)">
           Delete
         </button>
-        <button @click="isEdting = !isEdting">
+        <button class="text-moderate-blue fill-moderate-blue font-medium hover:opacity-70 transition-all" @click="isEdting = !isEdting">
           Edit
         </button>
       </div>

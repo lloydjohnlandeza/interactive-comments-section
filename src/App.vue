@@ -1,27 +1,57 @@
 <script setup lang="ts">
-  import { computed } from 'vue'
   import AppComment from '@/components/AppComment.vue'
+  import AppAddComment from '@/components/AppAddComment.vue'
   import data from '../data.json'
-  
-  const comments = computed(() => {
-    const comments = []
-    for (let index = 0; index < data.comments.length; index++) {
-      const element = data.comments[index];
-      const png = new URL(element.user.image.png, import.meta.url)
-      const webp = new URL(element.user.image.webp, import.meta.url)
-      comments.push({
-        ...element,
-        user: {
-          ...element.user,
-          image: {
-            png: png.toString(),
-            webp: webp.toString()
-          }
-        }
-      })
+  import { reactive } from 'vue'
+  import type { IComment } from './types/types';
+
+  const comments = reactive<Array<IComment>>(data.comments)
+
+  const findObjectByIndices = (data: Array<IComment>, indices: Array<number>): IComment | null => {
+    const index = indices.shift() as number;
+    const obj = data[index];
+    if (!obj) {
+      return null;
     }
-    return comments
-  })
+    if (indices.length === 0) {
+      return obj;
+    }
+    return findObjectByIndices(obj.replies || [], indices);
+  };
+
+  const handleUpvote = (ids: Array<number>) => {
+    const comment = findObjectByIndices(comments, ids)
+    if (!comment) return
+    const change = comment.downVoted ? 2 : 1
+    if (comment.upVoted) {
+      comment.score = comment.score - change
+      comment.upVoted = false
+    } else {
+      comment.score = comment.score + change
+      comment.upVoted = true
+      comment.downVoted = false
+    }
+  }
+
+  const handleDownVote = (ids: Array<number>) => {
+    const comment = findObjectByIndices(comments, ids)
+    if (!comment) return
+    const change = comment.upVoted ? 2 : 1
+    if (comment.downVoted) {
+      comment.score = comment.score + change
+      comment.downVoted = false
+    } else {
+      comment.score = comment.score - change
+      comment.downVoted = true
+      comment.upVoted = false
+    }
+  }
+  const newComment = (comment: IComment) => {
+    comments.push(comment)
+  }
+  const test = (e) => {
+    console.log(e)
+  }
 </script>
 
 <template>
@@ -29,9 +59,19 @@
     <app-comment
       v-for="(item, index) in comments" :key="index"
       v-bind="item"
+      :index="index"
+      :currentUser="data.currentUser"
+      @replied="test"
+      @upVote="handleUpvote"
+      @downVote="handleDownVote"
     ></app-comment>
+    <app-add-comment
+      :currentUser="data.currentUser"
+      @send="newComment"
+    />
   </main>
 </template>
 
 <style scoped>
 </style>
+

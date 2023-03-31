@@ -50,56 +50,13 @@
 </script>
 
 <template>
-  <div class="card">
-    <textarea v-model="comment" name="comment" placeholder="Add a comment..."></textarea>
-    <img v-if="showImage" :src="img" />
-    <button @click="handleSubmit">{{buttonLabel}}</button>
+  <div class="bg-white p-4 rounded-lg grid grid-cols-2 gap-4 mb-5">
+    <textarea class="col-span-2 border-light-gray border-solid border focus-visible:border-dark-blue p-3 resize-none h-24 placeholder:font-medium focus-visible:outline-none outline-none transition-all"  v-model="comment" name="comment" placeholder="Add a comment..."></textarea>
+    <img class="col-span-1 w-10" v-if="showImage" :src="img" />
+    <button class="col-span-1 ml-auto bg-moderate-blue text-white transition-all hover:opacity-70 rounded-md w-20 uppercase font-medium" @click="handleSubmit">{{buttonLabel}}</button>
   </div>
 </template>
 
 <style lang="scss" scoped>
-  .card {
-    display: grid;
-    gap: 20px;
-    textarea {
-      grid-column: 1/4;
-      width: 100%;
-      padding: 10px;
-      height: 100px;
-      resize: none;
-      border: solid 1px var(--light-gray);
-      outline: none !important;
-      transition: all .3s ease;
-      font-family: 'Rubik';
-      font-size: 16px;
-      &:focus {
-        border: solid 1px var(--grayish-blue);
-      }
-      &:placeholder {
-        font-family: 'Rubik';
-      }
-    }
-    > img {
-      max-width: 30px;
-      height: auto;
-      grid-column: 1;
-    }
-    > button {
-      grid-column: 3;
-      margin-left: auto;
-      font-weight: 500;
-      background-color: var(--moderate-blue);
-      border: solid 1px var(--white);
-      padding: 10px 20px;
-      border-radius: 5px;
-      color: var(--white);
-      text-transform: uppercase;
-      &:hover {
-        background-color: var(--white);
-        border: solid 1px var(--moderate-blue);
-        color: var(--moderate-blue);
-      }
-    }
-  }
 </style>
 

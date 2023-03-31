@@ -6,7 +6,11 @@
   import IconReply from './icons/IconReply.vue'
   import type { IUser, IComment } from '@/types/types'
   import AppAddComment from './AppAddComment.vue'
+  import { storeToRefs } from 'pinia';
+  import { useModalStore } from '@/stores/modal'
 
+  const store = useModalStore()
+  const { modal } = storeToRefs(store)
   const props = defineProps({
     id: {
       type: [String, Number],
@@ -112,14 +116,20 @@
     emit('updated', { indices: newIds, reply: event.reply })
     isEdting.value = false
   }
-
-  const deleteComment = (indices: Array<number> | number) => {
+  const deletConfirmation = async (index: number) => {
+    if (!await modal.value?.openModal({ title: 'Delete comment', content: 'Are you sure you want to delete this comment? This will remove the comment and can\'t be undone.'})) {
+      return
+    }
+    deleteComment(index)
+  }
+  const deleteComment = async (indices: Array<number> | number) => {
     let newIds = []
     if (Array.isArray(indices)) {
       newIds = [props.index, ...indices]
     } else {
       newIds.push(indices)
     }
+
     emit('deleted', newIds)
     isDeleting.value = false
     isEdting.value = false
@@ -127,11 +137,12 @@
 </script>
 
 <template>
-  <div class="comment-container">
+  <div class="comment-container relative">
     <div class="bg-white p-4 rounded-lg grid grid-cols-2 gap-4 mb-5">
       <div class="flex col-span-3 items-center gap-4 ">
         <img class="w-10" :src="img" />
         <span class="font-rubik font-bold text-dark-blue">{{ user.username }}</span>
+        <span class="px-2 rounded-sm font-medium bg-moderate-blue text-white" v-if="user.username === currentUser.username">you</span>
         <span class="text-grayish-blue">{{ createdAt }}</span>
       </div>
       <div class="col-span-3">
@@ -163,7 +174,7 @@
         </button>
       </div>
       <div v-else class="flex col-start-2 ml-auto max-w-max gap-4">
-        <button class="text-soft-red fill-soft-red font-medium hover:opacity-70 transition-all" @click="deleteComment(index)">
+        <button class="text-soft-red fill-soft-red font-medium hover:opacity-70 transition-all" @click="deletConfirmation(index)">
           Delete
         </button>
         <button class="text-moderate-blue fill-moderate-blue font-medium hover:opacity-70 transition-all" @click="isEdting = !isEdting">
@@ -190,7 +201,6 @@
         @replied="replySent"
         @down-vote="handleDownvote"
         @up-vote="handleUpvote"
-
       />
     </div>
   </div>
@@ -198,9 +208,7 @@
 
 <style lang="scss" scoped>
   .comment-container {
-    position: relative;
     .comment-list {
-      padding-left: 20px;
       &:before {
         content: '';
         position: absolute;
@@ -210,92 +218,6 @@
         height: 100%;
         width: 1px;
         background-color: var(--light-gray);
-      }
-    }
-  }
-  .comment {
-    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.1);
-    display: grid;
-    .header {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      grid-column: 1/3;
-      img {
-        width: 30px;
-      }
-      .username {
-        color: var(--dark-blue);
-        font-weight: 700;
-      }
-    }
-    .content {
-      margin: 15px 0;
-      grid-column: 1/3;
-      > .card {
-        padding: 0;
-      }
-      span {
-        font-weight: 500;
-        color: var(--moderate-blue);
-      }
-    }
-    .score-container {
-      display: flex;
-      align-self: flex-start;
-      align-items: center;
-      grid-column: 1;
-      max-width: max-content;
-      background-color: var(--very-light-gray);
-      border-radius: 10px;
-      color: var(--moderate-blue);
-      font-weight: 500;
-      button {
-        padding: 8px 15px;
-        color: var(--grayish-blue);
-        transition: all .3s ease;
-        > svg {
-          fill: var(--grayish-blue);
-          transition: all .3s ease;
-        }
-        &:hover {
-          color: var(--moderate-blue);
-          > svg {
-            fill: var(--dark-blue);
-          }
-        }
-        &.up-voted {
-          > svg {
-            fill: var(--soft-red);
-          }
-        }
-        &.down-voted {
-          > svg {
-            fill: var(--pale-red);
-          }
-        }
-      }
-    }
-    .button-container {
-      display: flex;
-      align-self: center;
-      text-align: right;
-      grid-column: 2;
-      button {
-        &:first-child {
-          margin-left: auto;
-        }
-        font-weight: 700;
-        color: var(--moderate-blue);
-        fill: var(--moderate-blue);
-        &.btn-soft-red {
-          color: var(--soft-red);
-        }
-        &:hover {
-          background: var(--very-light-gray);
-          color: var(--dark-blue);
-          fill: var(--dark-blue);
-        }
       }
     }
   }

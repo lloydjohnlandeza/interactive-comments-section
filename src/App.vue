@@ -1,9 +1,15 @@
 <script setup lang="ts">
   import AppComment from '@/components/AppComment.vue'
   import AppAddComment from '@/components/AppAddComment.vue'
+  import AppModal from '@/components/AppModal.vue'
   import data from '../data.json'
   import { reactive } from 'vue'
   import type { IComment } from './types/types';
+  import { storeToRefs } from 'pinia';
+  import { useModalStore } from '@/stores/modal'
+
+  const store = useModalStore()
+  const { modal } = storeToRefs(store)
 
   const comments = reactive<Array<IComment>>(data.comments)
 
@@ -85,11 +91,11 @@
     }
     data.replies.splice(childComment, 1)
   }
-
 </script>
 
 <template>
   <main>
+    <app-modal ref="modal" />
     <app-comment
       v-for="(item, index) in comments" :key="index"
       v-bind="item"
@@ -101,10 +107,10 @@
       @upVote="handleUpvote"
       @downVote="handleDownVote"
     ></app-comment>
-      <!-- <app-add-comment
-        :currentUser="data.currentUser"
-        @send="newComment"
-      /> -->
+    <app-add-comment
+      :currentUser="data.currentUser"
+      @send="newComment"
+    />
   </main>
 </template>
 

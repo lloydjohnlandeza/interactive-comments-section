@@ -36,7 +36,7 @@ Users should be able to:
 ### Links
 
 - Solution URL: [Add solution URL here](TBD)
-- Live Site URL: [Add live site URL here](TBD)
+- Live Site URL: [https://lj-interactive-comments.netlify.app/](https://lj-interactive-comments.netlify.app/)
 
 ## My process
 

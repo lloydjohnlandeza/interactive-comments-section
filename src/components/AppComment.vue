@@ -150,7 +150,7 @@
   <div class="comment-container relative">
     <div class="bg-white p-2 sm:p-4 rounded-lg grid grid-cols-2 sm:grid-cols-[auto_1fr_auto]  gap-2 sm:gap-4 mb-5">
       <div class="flex col-span-3 sm:col-start-2 sm:col-end-3 items-center gap-2 sm:gap-4 ">
-        <img class="w-10" :src="img" />
+        <img class="w-10" :alt="`${currentUser.username} image`" :src="img" />
         <span class="font-rubik font-bold text-dark-blue">{{ user.username }}</span>
         <span class="px-2 rounded-sm font-medium bg-moderate-blue text-white" v-if="user.username === currentUser.username">you</span>
         <span class="text-grayish-blue">{{ createdAtFromNow }}</span>
@@ -169,26 +169,26 @@
         </div>
       </div>
       <div class="bg-very-light-gray col-start-1 max-w-max rounded-lg sm:col-1 sm:row-start-1 sm:row-end-3 sm:flex sm:flex-col sm:items-center sm:self-start sm:col-auto">
-        <button class="p-3 fill-grayish-blue hover:opacity-70 transition-all" :class="{ 'fill-soft-red' : upVoted}" @click="handleUpvote(index)">
+        <button aria-label="Upvote comment" class="p-3 fill-grayish-blue hover:opacity-70 transition-all" :class="{ 'fill-soft-red' : upVoted}" @click="handleUpvote(index)">
           <IconPlus />
         </button>
         <span class="text-moderate-blue font-medium">{{ score }}</span>
-        <button class="p-3 fill-grayish-blue hover:opacity-70 transition-all" :class="{ 'fill-soft-red' : downVoted}" @click="handleDownvote(index)">
+        <button aria-label="Downvote comment" class="p-3 fill-grayish-blue hover:opacity-70 transition-all" :class="{ 'fill-soft-red' : downVoted}" @click="handleDownvote(index)">
           <IconMinus />
         </button>
       </div>
       <div v-if="user.username !== currentUser.username" class="col-start-2 ml-auto max-w-max sm:row-start-1 sm:col-start-3">
-        <button class="flex items-center gap-2 text-moderate-blue fill-moderate-blue font-medium hover:opacity-70 transition-all" @click="isReplying = !isReplying">
+        <button aria-label="Reply to comment" class="flex items-center gap-2 text-moderate-blue fill-moderate-blue font-medium hover:opacity-70 transition-all" @click="isReplying = !isReplying">
           <IconReply />
           Reply
         </button>
       </div>
       <div v-else class="flex col-start-2 ml-auto max-w-max sm:row-start-1 sm:col-start-3 gap-4">
-        <button class="text-soft-red fill-soft-red font-medium hover:opacity-70 transition-all flex items-center gap-2" @click="deletConfirmation(index)">
+        <button aria-label="Delete comment" class="text-soft-red fill-soft-red font-medium hover:opacity-70 transition-all flex items-center gap-2" @click="deletConfirmation(index)">
           <IconDelete />
           Delete
         </button>
-        <button class="text-moderate-blue fill-moderate-blue font-medium hover:opacity-70 transition-all flex items-center gap-2" @click="isEdting = !isEdting">
+        <button aria-label="Edit comment" class="text-moderate-blue fill-moderate-blue font-medium hover:opacity-70 transition-all flex items-center gap-2" @click="isEdting = !isEdting">
           <IconPencil />
           Edit
         </button>
@@ -202,7 +202,7 @@
       @send="replySent({ indices: index, reply: $event })"
     />
 
-    <div v-if="replies && replies.length" class="relative pl-4 sm:pl-16 comment-list before:left-1 sm:before:left-8">
+    <div v-if="replies && replies.length" class="relative pl-4 sm:pl-16 comment-list before:bg-light-gray before:left-1 sm:before:left-8">
       <app-comment
         v-for="(item, index) in replies" :key="index"
         :index="index"
@@ -227,7 +227,6 @@
         top: 0;
         height: 100%;
         width: 1px;
-        background-color: var(--light-gray);
       }
     }
   }

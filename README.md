@@ -35,7 +35,7 @@ Users should be able to:
 
 ### Links
 
-- Solution URL: [Add solution URL here](TBD)
+- Solution URL: [https://www.frontendmentor.io/solutions/vue-3-and-tailwindcss-qsvpKSffrg](https://www.frontendmentor.io/solutions/vue-3-and-tailwindcss-qsvpKSffrg)
 - Live Site URL: [https://lj-interactive-comments.netlify.app/](https://lj-interactive-comments.netlify.app/)
 
 ## My process

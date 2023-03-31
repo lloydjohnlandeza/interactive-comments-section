@@ -53,7 +53,7 @@
   <div class="bg-white p-4 rounded-lg grid grid-cols-2 gap-4 mb-5">
     <textarea class="col-span-2 border-light-gray border-solid border focus-visible:border-dark-blue p-3 resize-none h-24 placeholder:font-medium focus-visible:outline-none outline-none transition-all"  v-model="comment" name="comment" placeholder="Add a comment..."></textarea>
     <img class="col-span-1 w-10" v-if="showImage" :src="img" />
-    <button class="col-span-1 ml-auto bg-moderate-blue text-white transition-all hover:opacity-70 rounded-md w-20 uppercase font-medium" @click="handleSubmit">{{buttonLabel}}</button>
+    <button :class="{'col-span-2': !showImage}" class="col-span-1 ml-auto bg-moderate-blue text-white transition-all hover:opacity-70 rounded-md min-w-[100px] p-2 uppercase font-medium" @click="handleSubmit">{{buttonLabel}}</button>
   </div>
 </template>
 

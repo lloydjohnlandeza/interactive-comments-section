@@ -28,7 +28,7 @@
   }>();
 
   const img = computed(() => {
-    return new URL(props.currentUser.image.webp, import.meta.url).href
+    return new URL(`/src/assets/avatars/${props.currentUser.image.webp}`, import.meta.url).href
   })
 
   const comment = ref(props.initComment)

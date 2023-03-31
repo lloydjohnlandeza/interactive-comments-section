@@ -1,8 +1,9 @@
 <script setup lang="ts">
+  import { watch } from 'vue'
   import AppComment from '@/components/AppComment.vue'
   import AppAddComment from '@/components/AppAddComment.vue'
   import AppModal from '@/components/AppModal.vue'
-  import data from '../data.json'
+  import jsonData from '../data.json'
   import { reactive } from 'vue'
   import type { IComment } from './types/types';
   import { storeToRefs } from 'pinia';
@@ -11,7 +12,17 @@
   const store = useModalStore()
   const { modal } = storeToRefs(store)
 
-  const comments = reactive<Array<IComment>>(data.comments)
+  let initialComments = jsonData.comments
+  const localStorageComments = localStorage.getItem('comments')
+  if (localStorageComments !== null) {
+    initialComments = JSON.parse(localStorageComments)
+  }
+
+  const comments = reactive<Array<IComment>>(initialComments)
+
+  watch(comments, async (newComments) => {
+    localStorage.setItem('comments', JSON.stringify(newComments))
+  })
 
   const findCommentByIndices = (data: Array<IComment>, indices: Array<number>): IComment | null => {
     const index = indices.shift() as number;
@@ -91,6 +102,7 @@
     }
     data.replies.splice(childComment, 1)
   }
+
 </script>
 
 <template>
@@ -100,7 +112,7 @@
         v-for="(item, index) in comments" :key="index"
         v-bind="item"
         :index="index"
-        :currentUser="data.currentUser"
+        :currentUser="jsonData.currentUser"
         @deleted="handleDelete"
         @updated="handleUpdate"
         @replied="handleReply"
@@ -108,7 +120,7 @@
         @downVote="handleDownVote"
       ></app-comment>
       <app-add-comment
-        :currentUser="data.currentUser"
+        :currentUser="jsonData.currentUser"
         @send="newComment"
       />
     </div>

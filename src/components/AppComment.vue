@@ -77,7 +77,7 @@
   const isDeleting = ref(false)
 
   const img = computed(() => {
-    return new URL(props.user.image.webp, import.meta.url).toString()
+    return new URL(`/src/assets/avatars/${props.user.image.webp}`, import.meta.url).href
   })
 
   const createdAtFromNow = computed(() => {

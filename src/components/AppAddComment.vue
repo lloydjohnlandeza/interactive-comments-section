@@ -28,7 +28,7 @@
   }>();
 
   const img = computed(() => {
-    return new URL(props.currentUser.image.webp, import.meta.url).toString()
+    return new URL(props.currentUser.image.webp, import.meta.url).href
   })
 
   const comment = ref(props.initComment)

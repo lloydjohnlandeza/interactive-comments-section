@@ -11,6 +11,10 @@
   import { storeToRefs } from 'pinia';
   import { useModalStore } from '@/stores/modal'
 
+  import dayjs from 'dayjs';
+  import relativeTime from 'dayjs/plugin/relativeTime';
+  dayjs.extend(relativeTime);
+
   const store = useModalStore()
   const { modal } = storeToRefs(store)
   const props = defineProps({
@@ -74,6 +78,10 @@
 
   const img = computed(() => {
     return new URL(props.user.image.webp, import.meta.url).toString()
+  })
+
+  const createdAtFromNow = computed(() => {
+    return dayjs(props.createdAt).fromNow()
   })
 
 
@@ -145,7 +153,7 @@
         <img class="w-10" :src="img" />
         <span class="font-rubik font-bold text-dark-blue">{{ user.username }}</span>
         <span class="px-2 rounded-sm font-medium bg-moderate-blue text-white" v-if="user.username === currentUser.username">you</span>
-        <span class="text-grayish-blue">{{ createdAt }}</span>
+        <span class="text-grayish-blue">{{ createdAtFromNow }}</span>
       </div>
       <div class="col-span-3 sm:col-start-2 sm:col-end-4">
         <app-add-comment

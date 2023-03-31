@@ -102,7 +102,6 @@
     }
     data.replies.splice(childComment, 1)
   }
-
 </script>
 
 <template>

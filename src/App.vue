@@ -95,22 +95,25 @@
 
 <template>
   <main>
+    <div class="max-w-3xl mx-auto">
+      <app-comment
+        v-for="(item, index) in comments" :key="index"
+        v-bind="item"
+        :index="index"
+        :currentUser="data.currentUser"
+        @deleted="handleDelete"
+        @updated="handleUpdate"
+        @replied="handleReply"
+        @upVote="handleUpvote"
+        @downVote="handleDownVote"
+      ></app-comment>
+      <app-add-comment
+        :currentUser="data.currentUser"
+        @send="newComment"
+      />
+    </div>
     <app-modal ref="modal" />
-    <app-comment
-      v-for="(item, index) in comments" :key="index"
-      v-bind="item"
-      :index="index"
-      :currentUser="data.currentUser"
-      @deleted="handleDelete"
-      @updated="handleUpdate"
-      @replied="handleReply"
-      @upVote="handleUpvote"
-      @downVote="handleDownVote"
-    ></app-comment>
-    <app-add-comment
-      :currentUser="data.currentUser"
-      @send="newComment"
-    />
+
   </main>
 </template>
 

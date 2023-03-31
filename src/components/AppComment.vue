@@ -4,6 +4,8 @@
   import IconPlus from './icons/IconPlus.vue'
   import IconMinus from './icons/IconMinus.vue'
   import IconReply from './icons/IconReply.vue'
+  import IconDelete from './icons/IconDelete.vue'
+  import IconPencil from './icons/IconPencil.vue'
   import type { IUser, IComment } from '@/types/types'
   import AppAddComment from './AppAddComment.vue'
   import { storeToRefs } from 'pinia';
@@ -138,14 +140,14 @@
 
 <template>
   <div class="comment-container relative">
-    <div class="bg-white p-4 rounded-lg grid grid-cols-2 gap-4 mb-5">
-      <div class="flex col-span-3 items-center gap-4 ">
+    <div class="bg-white p-2 sm:p-4 rounded-lg grid grid-cols-2 sm:grid-cols-[auto_1fr_auto]  gap-2 sm:gap-4 mb-5">
+      <div class="flex col-span-3 sm:col-start-2 sm:col-end-3 items-center gap-2 sm:gap-4 ">
         <img class="w-10" :src="img" />
         <span class="font-rubik font-bold text-dark-blue">{{ user.username }}</span>
         <span class="px-2 rounded-sm font-medium bg-moderate-blue text-white" v-if="user.username === currentUser.username">you</span>
         <span class="text-grayish-blue">{{ createdAt }}</span>
       </div>
-      <div class="col-span-3">
+      <div class="col-span-3 sm:col-start-2 sm:col-end-4">
         <app-add-comment
           v-if="isEdting"
           button-label="Update"
@@ -158,7 +160,7 @@
           <span v-if="replyingTo" class="font-medium text-moderate-blue" >{{ `@${replyingTo}` }}</span> <span class="font-rubik text-grayish-blue">{{ content }}</span>
         </div>
       </div>
-      <div class="bg-very-light-gray col-start-1 max-w-max rounded-lg">
+      <div class="bg-very-light-gray col-start-1 max-w-max rounded-lg sm:col-1 sm:row-start-1 sm:row-end-3 sm:flex sm:flex-col sm:items-center sm:self-start sm:col-auto">
         <button class="p-3 fill-grayish-blue hover:opacity-70 transition-all" :class="{ 'fill-soft-red' : upVoted}" @click="handleUpvote(index)">
           <IconPlus />
         </button>
@@ -167,17 +169,19 @@
           <IconMinus />
         </button>
       </div>
-      <div v-if="user.username !== currentUser.username" class="col-start-2 ml-auto max-w-max">
+      <div v-if="user.username !== currentUser.username" class="col-start-2 ml-auto max-w-max sm:row-start-1 sm:col-start-3">
         <button class="flex items-center gap-2 text-moderate-blue fill-moderate-blue font-medium hover:opacity-70 transition-all" @click="isReplying = !isReplying">
           <IconReply />
           Reply
         </button>
       </div>
-      <div v-else class="flex col-start-2 ml-auto max-w-max gap-4">
-        <button class="text-soft-red fill-soft-red font-medium hover:opacity-70 transition-all" @click="deletConfirmation(index)">
+      <div v-else class="flex col-start-2 ml-auto max-w-max sm:row-start-1 sm:col-start-3 gap-4">
+        <button class="text-soft-red fill-soft-red font-medium hover:opacity-70 transition-all flex items-center gap-2" @click="deletConfirmation(index)">
+          <IconDelete />
           Delete
         </button>
-        <button class="text-moderate-blue fill-moderate-blue font-medium hover:opacity-70 transition-all" @click="isEdting = !isEdting">
+        <button class="text-moderate-blue fill-moderate-blue font-medium hover:opacity-70 transition-all flex items-center gap-2" @click="isEdting = !isEdting">
+          <IconPencil />
           Edit
         </button>
       </div>
@@ -190,7 +194,7 @@
       @send="replySent({ indices: index, reply: $event })"
     />
 
-    <div v-if="replies && replies.length" class="relative pl-4 comment-list">
+    <div v-if="replies && replies.length" class="relative pl-4 sm:pl-16 comment-list before:left-1 sm:before:left-8">
       <app-comment
         v-for="(item, index) in replies" :key="index"
         :index="index"
@@ -213,8 +217,6 @@
         content: '';
         position: absolute;
         top: 0;
-        left: 0;
-        margin-left: 2px;
         height: 100%;
         width: 1px;
         background-color: var(--light-gray);

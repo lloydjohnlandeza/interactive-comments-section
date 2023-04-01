@@ -38,7 +38,7 @@
     const commentObject: IComment = {
       id: uuidv4(),
       content: comment.value,
-      createdAt: 'Just Now',
+      createdAt: new Date().toISOString(),
       score: 1,
       user: props.currentUser,
       upVoted: true,
